@@ -25,7 +25,7 @@ services:
     hogfrom:
       - appserver
   node:
-    type: node:20
+    type: node:18
     build_as_root:
       - npm install -g gulp-cli gulp
   adminer:
