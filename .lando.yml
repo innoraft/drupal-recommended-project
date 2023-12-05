@@ -40,8 +40,6 @@ services:
     mem: 748
 
 proxy:
-  appserver:
-    - 'drupal-starter-project.lndo.site'
   mailhog:
     - 'mails-drupal-starter-project.lndo.site'
   adminer:
