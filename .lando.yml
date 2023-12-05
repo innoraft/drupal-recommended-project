@@ -25,7 +25,7 @@ services:
     hogfrom:
       - appserver
   node:
-    type: node:18
+    type: node:20
     build_as_root:
       - npm install -g gulp-cli gulp
   adminer:
@@ -39,6 +39,14 @@ services:
     type: memcached:1.5.12
     mem: 748
 
+proxy:
+  appserver:
+    - 'drupal-starter-project.lndo.site'
+  mailhog:
+    - 'mails-drupal-starter-project.lndo.site'
+  adminer:
+    - 'adminer-drupal-starter-project.lndo.site'
+
 tooling:
   drush:
     service: appserver
@@ -47,8 +55,13 @@ tooling:
       DRUSH_OPTIONS_URI: "https://drupal-starter-project.lndo.site"
   node:
     service: node
+    cmd: node
   npm:
     service: node
+    cmd: npm
+  gulp:
+    service: appserver
+    cmd: gulp
   xdebug-on:
     service: appserver
     description: Enable xdebug for nginx.
