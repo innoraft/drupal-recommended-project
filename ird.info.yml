@@ -1,0 +1,65 @@
+name: ird
+type: profile
+core_version_requirement: ^10
+description: 'Innoraft Recommended Distribution profile.'
+version: '1.0'
+distribution:
+  name: 'ird'
+  install:
+    theme: claro
+
+# Module installed during profile install, but can be uninstalled later.
+install:
+  # Core
+  - node
+  - history
+  - block
+  - breakpoint
+  - ckeditor5
+  - config
+  - contextual
+  - contact
+  - menu_link_content
+  - datetime
+  - block_content
+  - editor
+  - help
+  - image
+  - menu_ui
+  - options
+  - path
+  - page_cache
+  - dynamic_page_cache
+  - big_pipe
+  - taxonomy
+  - search
+  - toolbar
+  - field_ui
+  - file
+  - views
+  - views_ui
+  - tour
+  - automated_cron
+
+  # Contrib modules
+  - admin_toolbar
+  - entity_reference_revisions
+  - easy_breadcrumb
+  - paragraphs
+  - token
+  - pathauto
+  - password_policy_length
+  - password_policy_character_types
+  - password_policy_characters
+  - password_policy_history
+  - password_policy_username
+  - password_policy
+  - seckit
+  - metatag
+  - redirect
+  - svg_image
+  - viewfield
+  - field_group
+
+themes:
+  - claro
