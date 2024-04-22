@@ -58,6 +58,9 @@ install:
   - metatag
   - redirect
   - svg_image
+  - simple_sitemap
+  - schema_metatag
+  - schema_web_site
   - viewfield
   - field_group
 

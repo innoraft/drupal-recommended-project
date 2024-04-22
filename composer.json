@@ -26,7 +26,9 @@
         "drupal/password_policy": "^4.0",
         "drupal/pathauto": "^1.12",
         "drupal/redirect": "^1.9",
+        "drupal/schema_metatag": "^3.0",
         "drupal/seckit": "^2.0",
+        "drupal/simple_sitemap": "^4.1",
         "drupal/svg_image": "^3.0",
         "drupal/viewfield": "^3.0@beta",
         "drush/drush": "^12"
