@@ -57,6 +57,7 @@ install:
   - seckit
   - metatag
   - redirect
+  - session_limit
   - svg_image
   - simple_sitemap
   - schema_metatag
