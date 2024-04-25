@@ -59,11 +59,13 @@ install:
   - metatag
   - rabbit_hole
   - redirect
+  - reroute_email
   - session_limit
   - svg_image
   - simple_sitemap
   - schema_metatag
   - schema_web_site
+  - smtp
   - viewfield
   - field_group
 

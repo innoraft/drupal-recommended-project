@@ -28,10 +28,12 @@
         "drupal/pathauto": "^1.12",
         "drupal/rabbit_hole": "^1.0@beta",
         "drupal/redirect": "^1.9",
+        "drupal/reroute_email": "^2.2",
         "drupal/schema_metatag": "^3.0",
         "drupal/seckit": "^2.0",
         "drupal/session_limit": "^2.0@beta",
         "drupal/simple_sitemap": "^4.1",
+        "drupal/smtp": "^1.2",
         "drupal/svg_image": "^3.0",
         "drupal/viewfield": "^3.0@beta",
         "drush/drush": "^12"
