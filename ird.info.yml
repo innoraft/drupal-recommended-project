@@ -43,6 +43,7 @@ install:
 
   # Contrib modules
   - admin_toolbar
+  - autologout
   - entity_reference_revisions
   - easy_breadcrumb
   - paragraphs
@@ -56,6 +57,7 @@ install:
   - password_policy
   - seckit
   - metatag
+  - rabbit_hole
   - redirect
   - session_limit
   - svg_image
