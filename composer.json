@@ -121,6 +121,11 @@
             "web/themes/custom/{$name}": [
                 "type:drupal-custom-theme"
             ]
+        },
+        "patches": {
+            "drupal/autologout": {
+                "Warning message fixes": "./web/patches/34.patch"
+            }
         }
     }
 }
