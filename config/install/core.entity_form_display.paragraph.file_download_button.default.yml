@@ -1,0 +1,31 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.file_download_button.field_is_button_background_color
+    - field.field.paragraph.file_download_button.field_upload_file_to_be_download
+    - paragraphs.paragraphs_type.file_download_button
+  module:
+    - file
+id: paragraph.file_download_button.default
+targetEntityType: paragraph
+bundle: file_download_button
+mode: default
+content:
+  field_is_button_background_color:
+    type: boolean_checkbox
+    weight: 0
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_upload_file_to_be_download:
+    type: file_generic
+    weight: 1
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

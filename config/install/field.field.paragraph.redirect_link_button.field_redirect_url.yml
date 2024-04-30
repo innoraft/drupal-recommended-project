@@ -1,0 +1,23 @@
+uuid: 17ac8bf8-84bf-4a21-b175-edc06040eb69
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_redirect_url
+    - paragraphs.paragraphs_type.redirect_link_button
+  module:
+    - link
+id: paragraph.redirect_link_button.field_redirect_url
+field_name: field_redirect_url
+entity_type: paragraph
+bundle: redirect_link_button
+label: 'Redirect URL'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 1
+  link_type: 17
+field_type: link

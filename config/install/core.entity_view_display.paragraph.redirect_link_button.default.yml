@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.redirect_link_button.field_is_button_background_color
+    - field.field.paragraph.redirect_link_button.field_redirect_url
+    - paragraphs.paragraphs_type.redirect_link_button
+  module:
+    - link
+id: paragraph.redirect_link_button.default
+targetEntityType: paragraph
+bundle: redirect_link_button
+mode: default
+content:
+  field_redirect_url:
+    type: link
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  field_is_button_background_color: true
