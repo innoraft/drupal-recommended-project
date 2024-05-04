@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.banner_section.field_banner_items
+    - paragraphs.paragraphs_type.banner_section
+  module:
+    - entity_reference_revisions
+id: paragraph.banner_section.default
+targetEntityType: paragraph
+bundle: banner_section
+mode: default
+content:
+  field_banner_items:
+    type: entity_reference_revisions_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden: {  }

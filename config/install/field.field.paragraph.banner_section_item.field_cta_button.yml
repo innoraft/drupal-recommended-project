@@ -1,0 +1,42 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_cta_button
+    - paragraphs.paragraphs_type.banner_section_item
+    - paragraphs.paragraphs_type.ctas
+  module:
+    - entity_reference_revisions
+id: paragraph.banner_section_item.field_cta_button
+field_name: field_cta_button
+entity_type: paragraph
+bundle: banner_section_item
+label: 'CTA button'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      ctas: ctas
+    negate: 0
+    target_bundles_drag_drop:
+      banner_section_item:
+        weight: 6
+        enabled: false
+      ctas:
+        weight: 7
+        enabled: true
+      file_download_button:
+        weight: 8
+        enabled: false
+      normal_link_button:
+        weight: 9
+        enabled: false
+      redirect_link_button:
+        weight: 10
+        enabled: false
+field_type: entity_reference_revisions
