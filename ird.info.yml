@@ -44,12 +44,16 @@ install:
   # Contrib modules
   - admin_toolbar
   - entity_reference_revisions
+  - easy_breadcrumb
   - paragraphs
   - token
   - pathauto
   - seckit
   - metatag
   - redirect
+  - svg_image
+  - viewfield
+  - field_group
 
 themes:
   - claro
