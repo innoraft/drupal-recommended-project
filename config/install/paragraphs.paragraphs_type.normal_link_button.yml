@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies: {  }
+id: normal_link_button
+label: 'Normal Link button'
+icon_uuid: null
+icon_default: null
+description: 'Adds a Normal link button that opens in the same tab.'
+behavior_plugins: {  }

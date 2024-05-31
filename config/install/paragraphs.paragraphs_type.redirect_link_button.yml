@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies: {  }
+id: redirect_link_button
+label: 'Redirect Link Button'
+icon_uuid: null
+icon_default: null
+description: 'Adds a button to open the link in a new tab.'
+behavior_plugins: {  }

@@ -1,0 +1,33 @@
+uuid: ba108b54-8d5d-4a2c-b120-968b0ef5dfda
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.redirect_link_button.field_is_button_background_color
+    - field.field.paragraph.redirect_link_button.field_redirect_url
+    - paragraphs.paragraphs_type.redirect_link_button
+  module:
+    - link
+id: paragraph.redirect_link_button.default
+targetEntityType: paragraph
+bundle: redirect_link_button
+mode: default
+content:
+  field_is_button_background_color:
+    type: boolean_checkbox
+    weight: 0
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_redirect_url:
+    type: link_default
+    weight: 1
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
