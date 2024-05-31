@@ -19,12 +19,16 @@
         "drupal/core-composer-scaffold": "^10.0",
         "drupal/core-project-message": "^10.0",
         "drupal/core-recommended": "^10.0",
+        "drupal/easy_breadcrumb": "^2.0",
+        "drupal/field_group": "^3.4",
         "drupal/metatag": "^2.0",
         "drupal/paragraphs": "^1.16",
         "drupal/password_policy": "^4.0",
         "drupal/pathauto": "^1.12",
         "drupal/redirect": "^1.9",
         "drupal/seckit": "^2.0",
+        "drupal/svg_image": "^3.0",
+        "drupal/viewfield": "^3.0@beta",
         "drush/drush": "^12"
     },
     "require-dev": {
