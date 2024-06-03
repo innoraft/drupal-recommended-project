@@ -43,15 +43,29 @@ install:
 
   # Contrib modules
   - admin_toolbar
+  - autologout
   - entity_reference_revisions
   - easy_breadcrumb
   - paragraphs
   - token
   - pathauto
+  - password_policy_length
+  - password_policy_character_types
+  - password_policy_characters
+  - password_policy_history
+  - password_policy_username
+  - password_policy
   - seckit
   - metatag
+  - rabbit_hole
   - redirect
+  - reroute_email
+  - session_limit
   - svg_image
+  - simple_sitemap
+  - schema_metatag
+  - schema_web_site
+  - smtp
   - viewfield
   - field_group
 
