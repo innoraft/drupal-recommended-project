@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies: {  }
+id: file_download_button
+label: 'File Download Button'
+icon_uuid: null
+icon_default: null
+description: 'Adds a button to Download the uploaded file.'
+behavior_plugins: {  }

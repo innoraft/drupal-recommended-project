@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_is_button_background_color
+    - paragraphs.paragraphs_type.redirect_link_button
+id: paragraph.redirect_link_button.field_is_button_background_color
+field_name: field_is_button_background_color
+entity_type: paragraph
+bundle: redirect_link_button
+label: 'Is button background color dark?'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean
