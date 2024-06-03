@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_upload_file_to_be_download
+    - paragraphs.paragraphs_type.file_download_button
+  module:
+    - file
+id: paragraph.file_download_button.field_upload_file_to_be_download
+field_name: field_upload_file_to_be_download
+entity_type: paragraph
+bundle: file_download_button
+label: 'Upload file to be download'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: '[date:custom:Y]-[date:custom:m]'
+  file_extensions: 'txt pdf csv docx xlsx'
+  max_filesize: '5 MB'
+  description_field: false
+field_type: file

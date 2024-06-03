@@ -46,6 +46,8 @@ install:
   - autologout
   - entity_reference_revisions
   - easy_breadcrumb
+  - media
+  - media_library
   - paragraphs
   - token
   - pathauto
