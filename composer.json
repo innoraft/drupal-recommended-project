@@ -124,7 +124,7 @@
         },
         "patches": {
             "drupal/autologout": {
-                "Warning message fixes": "./web/patches/34.patch"
+                "Warning message fixes": "patches/34.patch"
             }
         }
     }
