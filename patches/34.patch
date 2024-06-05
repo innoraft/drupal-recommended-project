@@ -1,0 +1,458 @@
+From 84c786295f43dbe67c3807c5d653eae473c6c0a5 Mon Sep 17 00:00:00 2001
+From: Jigar Mehta <r2d2@jigarius.com>
+Date: Wed, 5 Jul 2023 11:28:23 -0600
+Subject: [PATCH 1/8] Fix: Undefined array key: destination
+
+---
+ src/EventSubscriber/AutologoutSubscriber.php | 26 +++++++++++---------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
+
+diff --git a/src/EventSubscriber/AutologoutSubscriber.php b/src/EventSubscriber/AutologoutSubscriber.php
+index 82a4ea3..b91f5af 100644
+--- a/src/EventSubscriber/AutologoutSubscriber.php
++++ b/src/EventSubscriber/AutologoutSubscriber.php
+@@ -122,19 +122,10 @@ class AutologoutSubscriber implements EventSubscriberInterface {
+       $session = $this->requestStack->getCurrentRequest()->getSession();
+       $auto_redirect = $session->get('auto_redirect');
+ 
+-      // Get http referer.
+-      $referer = "";
+-      $request = $this->requestStack->getCurrentRequest();
+-      if ($request->server->get('HTTP_REFERER')) {
+-        $referer = $request->server->get('HTTP_REFERER');
+-      }
+-      // Get query string from http referer url.
+-      $parse_url = parse_url($referer, PHP_URL_QUERY);
+       // If http referer url has 'destination' and session is not set,
+-      // then only redirect to user page if uid dosen't match.
+-      if ($parse_url !== NULL && (strpos($parse_url, 'destination') !== FALSE) && empty($auto_redirect)) {
+-        parse_str($parse_url, $output);
+-        $destination_uid = explode("/", $output['destination']);
++      // then only redirect to user page if uid doesn't match.
++      if (empty($auto_redirect) && ($destination = $this->getDestination())) {
++        $destination_uid = explode("/", $destination);
+ 
+         // If array contains language code, remove it.
+         $languagecode = $this->languageManager->getCurrentLanguage()->getId();
+@@ -201,4 +192,15 @@ class AutologoutSubscriber implements EventSubscriberInterface {
+     return $events;
+   }
+ 
++  private function getDestination(): ?string {
++    $request = $this->requestStack->getCurrentRequest();
++    if (!$referer = $request->server->get('HTTP_REFERER')) {
++      return NULL;
++    }
++
++    // Get query string from http referer url.
++    $referer_parts = parse_url($referer, PHP_URL_QUERY);
++    return $referer_parts['destination'] ?? FALSE;
++  }
++
+ }
+-- 
+GitLab
+
+
+From b83c48dfff8e11891ae1f1a5fdc15876681c5b27 Mon Sep 17 00:00:00 2001
+From: Dea Omerbegovic <dea.omerbegovic@agiledrop.com>
+Date: Mon, 25 Sep 2023 12:44:53 +0200
+Subject: [PATCH 2/8] CS correction
+
+---
+ src/EventSubscriber/AutologoutSubscriber.php | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/src/EventSubscriber/AutologoutSubscriber.php b/src/EventSubscriber/AutologoutSubscriber.php
+index b91f5af..2b5b147 100644
+--- a/src/EventSubscriber/AutologoutSubscriber.php
++++ b/src/EventSubscriber/AutologoutSubscriber.php
+@@ -192,12 +192,17 @@ class AutologoutSubscriber implements EventSubscriberInterface {
+     return $events;
+   }
+ 
++  /**
++   * Get destination from referer.
++   *
++   * @return string|null
++   *   The destination query string or null.
++   */
+   private function getDestination(): ?string {
+     $request = $this->requestStack->getCurrentRequest();
+     if (!$referer = $request->server->get('HTTP_REFERER')) {
+       return NULL;
+     }
+-
+     // Get query string from http referer url.
+     $referer_parts = parse_url($referer, PHP_URL_QUERY);
+     return $referer_parts['destination'] ?? FALSE;
+-- 
+GitLab
+
+
+From ecd0f4fdb3308f74d1b816b7f46eb1a32a8c858e Mon Sep 17 00:00:00 2001
+From: Admir Ljubijankic <admir.ljubijankic@agiledrop.com>
+Date: Mon, 25 Sep 2023 14:54:48 +0200
+Subject: [PATCH 3/8] Clean up the code
+
+---
+ src/EventSubscriber/AutologoutSubscriber.php | 50 ++++++++++----------
+ 1 file changed, 24 insertions(+), 26 deletions(-)
+
+diff --git a/src/EventSubscriber/AutologoutSubscriber.php b/src/EventSubscriber/AutologoutSubscriber.php
+index 2b5b147..30a47be 100644
+--- a/src/EventSubscriber/AutologoutSubscriber.php
++++ b/src/EventSubscriber/AutologoutSubscriber.php
+@@ -118,32 +118,30 @@ class AutologoutSubscriber implements EventSubscriberInterface {
+     }
+ 
+     // If user is not anonymous.
+-    if ($uid != 0) {
+-      $session = $this->requestStack->getCurrentRequest()->getSession();
+-      $auto_redirect = $session->get('auto_redirect');
+-
+-      // If http referer url has 'destination' and session is not set,
+-      // then only redirect to user page if uid doesn't match.
+-      if (empty($auto_redirect) && ($destination = $this->getDestination())) {
+-        $destination_uid = explode("/", $destination);
+-
+-        // If array contains language code, remove it.
+-        $languagecode = $this->languageManager->getCurrentLanguage()->getId();
+-        if ($destination_uid[1] === $languagecode) {
+-          unset($destination_uid[1]);
+-          $destination_uid = array_values($destination_uid);
+-        }
+-
+-        // If destination uid and actual uid does not match then,
+-        // redirect to loggedin user page.
+-        if (($destination_uid[1] == "user") && ($destination_uid[2] != $uid)) {
+-          $auto_redirect = $session->set('auto_redirect', 1);
+-          $login_url = Url::fromRoute('user.page', [], ['absolute' => TRUE])->toString();
+-
+-          // Redirect user to user page.
+-          $response = new RedirectResponse($login_url);
+-          $event->setResponse($response);
+-        }
++    $session = $this->requestStack->getCurrentRequest()->getSession();
++    $auto_redirect = $session->get('auto_redirect');
++
++    // If http referer url has 'destination' and session is not set,
++    // then only redirect to user page if uid doesn't match.
++    if (empty($auto_redirect) && ($destination = $this->getDestination())) {
++      $destination_uid = explode("/", $destination);
++
++      // If array contains language code, remove it.
++      $language_code = $this->languageManager->getCurrentLanguage()->getId();
++      if ($destination_uid[1] === $language_code) {
++        unset($destination_uid[1]);
++        $destination_uid = array_values($destination_uid);
++      }
++
++      // If destination uid and actual uid does not match then,
++      // redirect to logged-in user page.
++      if (($destination_uid[1] == "user") && ($destination_uid[2] != $uid)) {
++        $session->set('auto_redirect', 1);
++        $login_url = Url::fromRoute('user.page', [], ['absolute' => TRUE])->toString();
++
++        // Redirect user to user page.
++        $response = new RedirectResponse($login_url);
++        $event->setResponse($response);
+       }
+     }
+ 
+-- 
+GitLab
+
+
+From 8eccc6cffb5eed4db8fa8dbdd9987dd8b8b74fe1 Mon Sep 17 00:00:00 2001
+From: Dea Omerbegovic <dea.omerbegovic@agiledrop.com>
+Date: Tue, 26 Sep 2023 11:54:34 +0200
+Subject: [PATCH 4/8] Adjust geting the destination + add test
+
+---
+ src/EventSubscriber/AutologoutSubscriber.php  | 18 +---
+ .../UserDestinationLogoutTest.php             | 96 +++++++++++++++++++
+ 2 files changed, 101 insertions(+), 13 deletions(-)
+ create mode 100644 tests/src/FunctionalJavascript/UserDestinationLogoutTest.php
+
+diff --git a/src/EventSubscriber/AutologoutSubscriber.php b/src/EventSubscriber/AutologoutSubscriber.php
+index 30a47be..81077c6 100644
+--- a/src/EventSubscriber/AutologoutSubscriber.php
++++ b/src/EventSubscriber/AutologoutSubscriber.php
+@@ -124,18 +124,7 @@ class AutologoutSubscriber implements EventSubscriberInterface {
+     // If http referer url has 'destination' and session is not set,
+     // then only redirect to user page if uid doesn't match.
+     if (empty($auto_redirect) && ($destination = $this->getDestination())) {
+-      $destination_uid = explode("/", $destination);
+-
+-      // If array contains language code, remove it.
+-      $language_code = $this->languageManager->getCurrentLanguage()->getId();
+-      if ($destination_uid[1] === $language_code) {
+-        unset($destination_uid[1]);
+-        $destination_uid = array_values($destination_uid);
+-      }
+-
+-      // If destination uid and actual uid does not match then,
+-      // redirect to logged-in user page.
+-      if (($destination_uid[1] == "user") && ($destination_uid[2] != $uid)) {
++      if (strpos($destination, 'user') !== FALSE) {
+         $session->set('auto_redirect', 1);
+         $login_url = Url::fromRoute('user.page', [], ['absolute' => TRUE])->toString();
+ 
+@@ -203,7 +192,10 @@ class AutologoutSubscriber implements EventSubscriberInterface {
+     }
+     // Get query string from http referer url.
+     $referer_parts = parse_url($referer, PHP_URL_QUERY);
+-    return $referer_parts['destination'] ?? FALSE;
++    if (strpos($referer_parts, 'destination') !== FALSE) {
++      return $referer_parts;
++    }
++    return FALSE;
+   }
+ 
+ }
+diff --git a/tests/src/FunctionalJavascript/UserDestinationLogoutTest.php b/tests/src/FunctionalJavascript/UserDestinationLogoutTest.php
+new file mode 100644
+index 0000000..5a7f8ac
+--- /dev/null
++++ b/tests/src/FunctionalJavascript/UserDestinationLogoutTest.php
+@@ -0,0 +1,96 @@
++<?php
++
++namespace Drupal\Tests\autologout\FunctionalJavascript;
++
++use Drupal\Core\Config\Config;
++use Drupal\Core\Url;
++use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
++use Drupal\user\Entity\User;
++
++/**
++ * Tests that user is redirected to its own profile.
++ *
++ * @group Autologout
++ */
++class UserDestinationLogoutTest extends WebDriverTestBase {
++  /**
++   * Modules to enable.
++   *
++   * @var array
++   */
++  protected static $modules = [
++    'system',
++    'user',
++    'autologout',
++  ];
++
++  /**
++   * {@inheritdoc}
++   */
++  protected $defaultTheme = 'stark';
++
++  /**
++   * Config factory.
++   *
++   * @var \Drupal\Core\Config\Config
++   */
++  protected Config $moduleConfig;
++
++  /**
++   * User to logout.
++   *
++   * @var bool|\Drupal\user\Entity\User|false
++   */
++  protected $privilegedUser;
++
++  /**
++   * User to login.
++   *
++   * @var \Drupal\user\Entity\User
++   */
++  protected User $testUser;
++
++  /**
++   * {@inheritdoc}
++   */
++  protected function setUp(): void {
++    parent::setUp();
++
++    $this->baseUrl = Url::fromRoute('<front>', [], ['absolute' => TRUE])->toString();
++
++    $this->privilegedUser = $this->drupalCreateUser();
++    $this->testUser = $this->drupalCreateUser();
++
++    $this->moduleConfig = $this->container->get('config.factory')->getEditable('autologout.settings');
++
++    // For testing purposes set the timeout to 5 seconds.
++    $this->moduleConfig->set('timeout', 5)->set('padding', 2)->save();
++
++    $this->drupalLogin($this->privilegedUser);
++  }
++
++  /**
++   * Tests that redirection is correct when destination is set.
++   *
++   * If destination is set for user/login test that user is redirected to its
++   * own profile when logged in again.
++   */
++  public function testDestinationUserLogout(): void {
++    // Check that first user is logged in.
++    self::assertTrue($this->drupalUserIsLoggedIn($this->privilegedUser));
++    $this->drupalGet('user/' . $this->privilegedUser->id());
++    // Wait for timeout.
++    sleep(10);
++    // Check that destination is set after logout and privilegedUser user
++    // is logged out.
++    $session = $this->assertSession();
++    $session->addressEquals($this->baseUrl . '/user/login?destination=/user/' . $this->privilegedUser->id() . '%3Fcheck_logged_in%3D1&autologout_timeout=1');
++    self::assertFalse($this->drupalUserIsLoggedIn($this->privilegedUser));
++
++    // Login testUser and check that user was redirected to its own profile.
++    $this->drupalLogin($this->testUser);
++    $session = $this->assertSession();
++    $session->addressEquals($this->baseUrl . '/user/' . $this->testUser->id());
++  }
++
++}
+-- 
+GitLab
+
+
+From d85645f184209127b1b46036dca95d8e208aefb9 Mon Sep 17 00:00:00 2001
+From: Dea Omerbegovic <dea.omerbegovic@agiledrop.com>
+Date: Tue, 26 Sep 2023 12:04:00 +0200
+Subject: [PATCH 5/8] Adjust url for drupal test
+
+---
+ tests/src/FunctionalJavascript/UserDestinationLogoutTest.php | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tests/src/FunctionalJavascript/UserDestinationLogoutTest.php b/tests/src/FunctionalJavascript/UserDestinationLogoutTest.php
+index 5a7f8ac..63a7642 100644
+--- a/tests/src/FunctionalJavascript/UserDestinationLogoutTest.php
++++ b/tests/src/FunctionalJavascript/UserDestinationLogoutTest.php
+@@ -84,7 +84,7 @@ class UserDestinationLogoutTest extends WebDriverTestBase {
+     // Check that destination is set after logout and privilegedUser user
+     // is logged out.
+     $session = $this->assertSession();
+-    $session->addressEquals($this->baseUrl . '/user/login?destination=/user/' . $this->privilegedUser->id() . '%3Fcheck_logged_in%3D1&autologout_timeout=1');
++    $session->addressEquals($this->baseUrl . '/user/login?destination=/web/user/' . $this->privilegedUser->id() . '%3Fcheck_logged_in%3D1&autologout_timeout=1');
+     self::assertFalse($this->drupalUserIsLoggedIn($this->privilegedUser));
+ 
+     // Login testUser and check that user was redirected to its own profile.
+-- 
+GitLab
+
+
+From edbbbfb9d686dc4b04e7162edddceb1133ae45d9 Mon Sep 17 00:00:00 2001
+From: Dea Omerbegovic <dea.omerbegovic@agiledrop.com>
+Date: Tue, 26 Sep 2023 14:30:12 +0200
+Subject: [PATCH 6/8] Add not empty check for str_contains
+
+---
+ src/EventSubscriber/AutologoutSubscriber.php             | 2 +-
+ .../FunctionalJavascript/UserDestinationLogoutTest.php   | 9 ++++-----
+ 2 files changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/src/EventSubscriber/AutologoutSubscriber.php b/src/EventSubscriber/AutologoutSubscriber.php
+index 81077c6..4c9080a 100644
+--- a/src/EventSubscriber/AutologoutSubscriber.php
++++ b/src/EventSubscriber/AutologoutSubscriber.php
+@@ -192,7 +192,7 @@ class AutologoutSubscriber implements EventSubscriberInterface {
+     }
+     // Get query string from http referer url.
+     $referer_parts = parse_url($referer, PHP_URL_QUERY);
+-    if (strpos($referer_parts, 'destination') !== FALSE) {
++    if (!empty($referer_parts) && str_contains($referer_parts, 'destination')) {
+       return $referer_parts;
+     }
+     return FALSE;
+diff --git a/tests/src/FunctionalJavascript/UserDestinationLogoutTest.php b/tests/src/FunctionalJavascript/UserDestinationLogoutTest.php
+index 63a7642..e717931 100644
+--- a/tests/src/FunctionalJavascript/UserDestinationLogoutTest.php
++++ b/tests/src/FunctionalJavascript/UserDestinationLogoutTest.php
+@@ -80,17 +80,16 @@ class UserDestinationLogoutTest extends WebDriverTestBase {
+     self::assertTrue($this->drupalUserIsLoggedIn($this->privilegedUser));
+     $this->drupalGet('user/' . $this->privilegedUser->id());
+     // Wait for timeout.
+-    sleep(10);
++    $this->getSession()->wait(10000);
+     // Check that destination is set after logout and privilegedUser user
+     // is logged out.
+-    $session = $this->assertSession();
+-    $session->addressEquals($this->baseUrl . '/user/login?destination=/web/user/' . $this->privilegedUser->id() . '%3Fcheck_logged_in%3D1&autologout_timeout=1');
++    $this->assertSession()->addressEquals($this->getUrl());
++    $this->assertStringContainsString('/user/login?destination=/web/user/' . $this->privilegedUser->id(), $this->getSession()->getCurrentUrl());
+     self::assertFalse($this->drupalUserIsLoggedIn($this->privilegedUser));
+ 
+     // Login testUser and check that user was redirected to its own profile.
+     $this->drupalLogin($this->testUser);
+-    $session = $this->assertSession();
+-    $session->addressEquals($this->baseUrl . '/user/' . $this->testUser->id());
++    $this->assertSession()->addressEquals($this->baseUrl . '/user/' . $this->testUser->id());
+   }
+ 
+ }
+-- 
+GitLab
+
+
+From 85c0c3ccf80fb343c104e3ee467ecb22d7e446c1 Mon Sep 17 00:00:00 2001
+From: Admir Ljubijankic <admir.ljubijankic@agiledrop.com>
+Date: Wed, 27 Sep 2023 08:57:07 +0200
+Subject: [PATCH 7/8] Fix destination path check in the test.
+
+---
+ tests/src/FunctionalJavascript/UserDestinationLogoutTest.php | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/tests/src/FunctionalJavascript/UserDestinationLogoutTest.php b/tests/src/FunctionalJavascript/UserDestinationLogoutTest.php
+index e717931..44c0219 100644
+--- a/tests/src/FunctionalJavascript/UserDestinationLogoutTest.php
++++ b/tests/src/FunctionalJavascript/UserDestinationLogoutTest.php
+@@ -79,12 +79,14 @@ class UserDestinationLogoutTest extends WebDriverTestBase {
+     // Check that first user is logged in.
+     self::assertTrue($this->drupalUserIsLoggedIn($this->privilegedUser));
+     $this->drupalGet('user/' . $this->privilegedUser->id());
++    // Used later because of the way that the url is built.
++    $user_uri = Url::fromRoute('entity.user.canonical', ['user' => $this->privilegedUser->id()])->toString();
+     // Wait for timeout.
+     $this->getSession()->wait(10000);
+     // Check that destination is set after logout and privilegedUser user
+     // is logged out.
+     $this->assertSession()->addressEquals($this->getUrl());
+-    $this->assertStringContainsString('/user/login?destination=/web/user/' . $this->privilegedUser->id(), $this->getSession()->getCurrentUrl());
++    $this->assertStringContainsString('/user/login?destination=' . $user_uri, $this->getSession()->getCurrentUrl());
+     self::assertFalse($this->drupalUserIsLoggedIn($this->privilegedUser));
+ 
+     // Login testUser and check that user was redirected to its own profile.
+-- 
+GitLab
+
+
+From 51fef7df7b1f9e77aa50eca7f239207308745d77 Mon Sep 17 00:00:00 2001
+From: Carlos Reig Matut <43143-unstatu@users.noreply.drupalcode.org>
+Date: Tue, 26 Dec 2023 17:06:12 +0000
+Subject: [PATCH 8/8] 3372010 - Used regex to match the user profile patch
+
+---
+ src/EventSubscriber/AutologoutSubscriber.php | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/EventSubscriber/AutologoutSubscriber.php b/src/EventSubscriber/AutologoutSubscriber.php
+index 4c9080a..2d70f68 100644
+--- a/src/EventSubscriber/AutologoutSubscriber.php
++++ b/src/EventSubscriber/AutologoutSubscriber.php
+@@ -124,7 +124,9 @@ class AutologoutSubscriber implements EventSubscriberInterface {
+     // If http referer url has 'destination' and session is not set,
+     // then only redirect to user page if uid doesn't match.
+     if (empty($auto_redirect) && ($destination = $this->getDestination())) {
+-      if (strpos($destination, 'user') !== FALSE) {
++      $match = preg_match('#^destination=(/[a-z]+)?/user/([0-9]+)$#', $destination, $matches);
++
++      if ($match && $matches[2] != $uid) {
+         $session->set('auto_redirect', 1);
+         $login_url = Url::fromRoute('user.page', [], ['absolute' => TRUE])->toString();
+ 
+-- 
+GitLab
+

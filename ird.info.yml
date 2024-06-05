@@ -43,8 +43,11 @@ install:
 
   # Contrib modules
   - admin_toolbar
+  - autologout
   - entity_reference_revisions
   - easy_breadcrumb
+  - media
+  - media_library
   - paragraphs
   - token
   - pathauto
@@ -56,8 +59,15 @@ install:
   - password_policy
   - seckit
   - metatag
+  - rabbit_hole
   - redirect
+  - reroute_email
+  - session_limit
   - svg_image
+  - simple_sitemap
+  - schema_metatag
+  - schema_web_site
+  - smtp
   - viewfield
   - field_group
 

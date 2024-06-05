@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies: {  }
+id: banner_section_item
+label: 'Banner Section Item'
+icon_uuid: null
+icon_default: null
+description: 'Used to add a Banner Item to the Banner section.'
+behavior_plugins: {  }

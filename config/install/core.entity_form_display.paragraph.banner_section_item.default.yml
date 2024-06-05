@@ -1,0 +1,63 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.banner_section_item.field_banner_description
+    - field.field.paragraph.banner_section_item.field_banner_image
+    - field.field.paragraph.banner_section_item.field_banner_title
+    - field.field.paragraph.banner_section_item.field_cta_button
+    - paragraphs.paragraphs_type.banner_section_item
+  module:
+    - media_library
+    - paragraphs
+    - text
+id: paragraph.banner_section_item.default
+targetEntityType: paragraph
+bundle: banner_section_item
+mode: default
+content:
+  field_banner_description:
+    type: text_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 4
+      placeholder: ''
+    third_party_settings: {  }
+  field_banner_image:
+    type: media_library_widget
+    weight: 2
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+  field_banner_title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_cta_button:
+    type: paragraphs
+    weight: 3
+    region: content
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ctas
+      features:
+        add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

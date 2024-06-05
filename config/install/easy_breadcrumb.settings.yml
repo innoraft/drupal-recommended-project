@@ -1,5 +1,3 @@
-_core:
-  default_config_hash: i76EDs9aAKdrR4nZfe_woXsD0yihn4avDej8uClXES8
 applies_admin_routes: true
 include_home_segment: true
 alternative_title_field: field_breadcrumb_title
