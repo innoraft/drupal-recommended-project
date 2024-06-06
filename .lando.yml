@@ -1,8 +1,12 @@
 name: drupal-starter-project
 recipe: drupal10
 
+env_file:
+  - defaults.env
+  - .lando/special.env
+
 config:
-  webroot: web
+  webroot: docroot
   via: nginx
   xdebug: true
   database: mysql:8.0
