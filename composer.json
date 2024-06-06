@@ -2,7 +2,7 @@
     "name": "innoraft/drupal-recommended-project",
     "description": "Project template for Drupal 10 projects with a relocated document root",
     "license": "GPL-2.0-or-later",
-    "type": "project",
+    "type": "drupal-profile",
     "homepage": "https://www.innoraft.com",
     "support": {
         "chat": "https://www.drupal.org/node/314178",
@@ -90,35 +90,38 @@
         },
         "drupal-scaffold": {
             "locations": {
-                "web-root": "web/"
+                "project-root": ".",
+                "web-root": "./docroot"
             }
         },
         "installer-paths": {
             "drush/Commands/contrib/{$name}": [
                 "type:drupal-drush"
             ],
-            "web/core": [
+            "docroot/core": [
                 "type:drupal-core"
             ],
-            "web/libraries/{$name}": [
-                "type:drupal-library"
+            "docroot/libraries/{$name}": [
+                "type:drupal-library",
+                "type:bower-asset",
+                "type:npm-asset"
             ],
-            "web/modules/contrib/{$name}": [
+            "docroot/modules/contrib/{$name}": [
                 "type:drupal-module"
             ],
-            "web/modules/custom/{$name}": [
+            "docroot/modules/custom/{$name}": [
                 "type:drupal-custom-module"
             ],
-            "web/profiles/contrib/{$name}": [
+            "docroot/profiles/contrib/{$name}": [
                 "type:drupal-profile"
             ],
-            "web/profiles/custom/{$name}": [
+            "docroot/profiles/custom/{$name}": [
                 "type:drupal-custom-profile"
             ],
-            "web/themes/contrib/{$name}": [
+            "docroot/themes/contrib/{$name}": [
                 "type:drupal-theme"
             ],
-            "web/themes/custom/{$name}": [
+            "docroot/themes/custom/{$name}": [
                 "type:drupal-custom-theme"
             ]
         },
@@ -127,5 +130,22 @@
                 "Warning message fixes": "patches/34.patch"
             }
         }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "Composer\\Config::disableProcessTimeout",
+            "@putenv PROFILE_DIR=./docroot/profiles/contrib/ird",
+            "if [ \"$ENV_TYPE\" = \"local\" ]; then composer build:local; fi;"
+        ],
+        "build:local": [
+            "echo Creating PROFILE_DIR at $PROFILE_DIR",
+            "mkdir -p $PROFILE_DIR",
+            "find $PWD -name 'ird.*' -type f -maxdepth 1 -exec ln -s -f '{}' $PROFILE_DIR ';'",
+            "find ./docroot/modules/contrib -type d -maxdepth 1 -name \"ird*\" -exec cp -r '{}' $MODULES_DIR ';'",
+            "ln -s -f $PWD/config $PROFILE_DIR",
+            "ln -s -f $PWD/src $PROFILE_DIR",
+            "ln -s -f $PWD/modules $PROFILE_DIR"
+        ],
+        "nuke": "rm -r -f docroot/ vendor/"
     }
 }
